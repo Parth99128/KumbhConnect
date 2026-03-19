@@ -1,0 +1,35 @@
+{
+  "expo": {
+    "name": "KumbhConnect",
+    "slug": "kumbhconnect",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
+    "owner": "admin",
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.anonymous.kumbhconnect"
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#ffffff"
+      },
+      "package": "com.anonymous.kumbhconnect"
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "plugins": [
+      "expo-dev-client",
+      "react-native-ble-plx",
+      "react-native-background-geolocation"
+    ]
+  }
+}

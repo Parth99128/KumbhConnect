@@ -1,0 +1,23 @@
+{
+  "name": "kumbhconnect-mobile",
+  "version": "1.0.0",
+  "private": true,
+  "dependencies": {
+    "geolib": "^3.3.4",
+    "react": "18.2.0",
+    "react-native": "0.72.6",
+    "react-native-background-geolocation": "^4.14.3",
+    "react-native-ble-plx": "^3.5.1",
+    "react-native-maps": "^1.18.0",
+    "react-native-reanimated": "^4.2.2",
+    "react-native-sensors": "^7.3.6",
+    "react-native-volume-manager": "^2.0.8"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.29.0",
+    "@types/react": "^18.3.28",
+    "@types/react-native": "^0.72.8",
+    "babel-preset-expo": "^55.0.11",
+    "typescript": "^5.9.3"
+  }
+}

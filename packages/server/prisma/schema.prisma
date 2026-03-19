@@ -1,0 +1,177 @@
+generator client {
+  provider        = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// ============================================
+// USER & AUTHENTICATION
+// ============================================
+
+model User {
+  id            String    @id @default(cuid())
+  phone         String    @unique
+  name          String
+  photoUrl      String?
+  deviceId      String?   @unique
+  language      String    @default("en")
+  pushToken     String?
+  lastSeenAt    DateTime  @default(now())
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  memberships   GroupMember[]
+  locations     LocationHistory[]
+  sentSOS       SOSAlert[]        @relation("sender")
+  ackedSOS      SOSAlert[]        @relation("acknowledger")
+  wristbands    Wristband[]
+
+  @@index([phone])
+  @@index([deviceId])
+}
+
+// ============================================
+// GROUP MANAGEMENT
+// ============================================
+
+model Group {
+  id            String    @id @default(cuid())
+  name          String
+  inviteCode    String    @unique
+  description   String?
+  eventDate     DateTime?
+  isActive      Boolean   @default(true)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  members       GroupMember[]
+  meetingPoints MeetingPoint[]
+  sosAlerts     SOSAlert[]
+
+  @@index([inviteCode])
+}
+
+model GroupMember {
+  id            String      @id @default(cuid())
+  userId        String
+  groupId       String
+  role          String      @default("MEMBER")
+  nickname      String?
+  joinedAt      DateTime    @default(now())
+  isActive      Boolean     @default(true)
+
+  user          User        @relation(fields: [userId], references: [id])
+  group         Group       @relation(fields: [groupId], references: [id])
+
+  @@unique([userId, groupId])
+  @@index([groupId])
+}
+
+// ============================================
+// REAL-TIME LOCATION
+// ============================================
+
+model LocationHistory {
+  id            String          @id @default(cuid())
+  userId        String
+  latitude      Float
+  longitude     Float
+  accuracy      Float?
+  altitude      Float?
+  heading       Float?
+  speed         Float?
+  batteryLevel  Float?
+  source        String          @default("GPS")
+  timestamp     DateTime        @default(now())
+
+  user          User            @relation(fields: [userId], references: [id])
+
+  @@index([userId, timestamp(sort: Desc)])
+  @@index([timestamp])
+}
+
+// ============================================
+// SOS / EMERGENCY
+// ============================================
+
+model SOSAlert {
+  id              String      @id @default(cuid())
+  senderId        String
+  groupId         String
+  latitude        Float
+  longitude       Float
+  message         String?
+  severity        String      @default("HIGH")
+  status          String      @default("ACTIVE")
+  acknowledgedBy  String?
+  acknowledgedAt  DateTime?
+  resolvedAt      DateTime?
+  createdAt       DateTime    @default(now())
+
+  sender          User        @relation("sender", fields: [senderId], references: [id])
+  acknowledger    User?       @relation("acknowledger", fields: [acknowledgedBy], references: [id])
+  group           Group       @relation(fields: [groupId], references: [id])
+
+  @@index([groupId, status])
+  @@index([senderId])
+}
+
+// ============================================
+// MEETING POINTS
+// ============================================
+
+model MeetingPoint {
+  id            String            @id @default(cuid())
+  groupId       String?
+  name          String
+  description   String?
+  latitude      Float
+  longitude     Float
+  type          String
+  isActive      Boolean           @default(true)
+  createdAt     DateTime          @default(now())
+
+  group         Group?            @relation(fields: [groupId], references: [id])
+
+  @@index([groupId])
+}
+
+// ============================================
+// QR WRISTBAND SYSTEM
+// ============================================
+
+model Wristband {
+  id              String    @id @default(cuid())
+  qrCode          String    @unique
+  userId          String
+  assignedName    String
+  emergencyPhone  String
+  isActive        Boolean   @default(true)
+  lastScannedAt   DateTime?
+  lastLatitude    Float?
+  lastLongitude   Float?
+  createdAt       DateTime  @default(now())
+
+  user            User      @relation(fields: [userId], references: [id])
+
+  @@index([qrCode])
+}
+
+// ============================================
+// SMS/USSD SESSION TRACKING
+// ============================================
+
+model SMSSession {
+  id            String    @id @default(cuid())
+  phone         String
+  lastCommand   String?
+  groupId       String?
+  state         String    @default("IDLE")
+  expiresAt     DateTime
+  createdAt     DateTime  @default(now())
+
+  @@index([phone])
+}
