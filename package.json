@@ -25,8 +25,5 @@
       "esbuild",
       "prisma"
     ]
-  },
-  "dependencies": {
-    "react-native-maps": "^1.27.2"
   }
 }
