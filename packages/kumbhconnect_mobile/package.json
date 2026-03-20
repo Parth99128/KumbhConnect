@@ -2,6 +2,9 @@
   "name": "kumbhconnect-mobile",
   "version": "1.0.0",
   "private": true,
+  "scripts": {
+    "eas-build-pre-install": "npm install -g pnpm && cd ../../ && pnpm install"
+  },
   "dependencies": {
     "expo": "~49.0.15",
     "expo-dev-client": "~2.4.12",
