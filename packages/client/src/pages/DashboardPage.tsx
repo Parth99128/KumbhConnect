@@ -21,10 +21,10 @@ export interface DroneData {
 
 export default function DashboardPage() {
   const { t } = useTranslation();
-  const userId = useAuthStore((s) => s.user?.id);
-  const memberLocations = useLocationStore((s) => s.memberLocations);
-  const groups = useGroupStore((s) => s.groups);
-  const setGroups = useGroupStore((s) => s.setGroups);
+  const userId = useAuthStore((s: any) => s.user?.id);
+  const memberLocations = useLocationStore((s: any) => s.memberLocations);
+  const groups = useGroupStore((s: any) => s.groups);
+  const setGroups = useGroupStore((s: any) => s.setGroups);
 
   const [droneZones, setDroneZones] = useState<DroneData[]>([]);
   const [isConnectedToAI, setIsConnectedToAI] = useState(false);
@@ -34,12 +34,12 @@ export default function DashboardPage() {
     adjustForBattery();
     getSocket();
 
-    api.get("/groups").then(({ data }) => {
+    api.get("/groups").then(({ data }: any) => {
       setGroups(data);
       for (const group of data) {
         joinGroup(group.id);
       }
-    }).catch(e => console.error("Failed to fetch groups", e));
+    }).catch((e: any) => console.error("Failed to fetch groups", e));
 
     const aiWs = new WebSocket("ws://localhost:8001/ws/cctv");
     
@@ -49,8 +49,8 @@ export default function DashboardPage() {
       try {
         const data = JSON.parse(event.data);
         if (data.type === "density_update") {
-          setDroneZones(prev => {
-            const existing = prev.filter(z => z.sector_id !== data.sector_id);
+          setDroneZones((prev: any[]) => {
+            const existing = prev.filter((z: any) => z.sector_id !== data.sector_id);
             return [...existing, { ...data, timestamp: new Date().toISOString() }];
           });
         }
@@ -62,7 +62,7 @@ export default function DashboardPage() {
     return () => aiWs.close();
   }, [setGroups]);
 
-  const criticalZones = droneZones.filter(z => z.crowd_density >= 0.8);
+  const criticalZones = droneZones.filter((z: any) => z.crowd_density >= 0.8);
 
   return (
     <div style={{ height: "calc(100dvh - 64px)", display: "flex", flexDirection: "row", overflow: "hidden", backgroundColor: "#0f172a", fontFamily: "system-ui, -apple-system, sans-serif" }}>
